@@ -105,14 +105,18 @@ export default About;
 
 #### Nested Pages
 
-- nesting all the pages within the home page
+- use "outlet" in the main layout page so that the layout content will be passed all through out the all pages
+  ou
+- use index : true in the main/home page which you feel to be
+- can nest serveral compo inside a sing compo page and we can further nest compo inside a compo
 
+- the index we set will be a default home page and it is associated with the parent path - /home/landing
   App.jsx
 
 ```js
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: '/home',
     element: <HomeLayout />,
     children: [
       {
@@ -128,7 +132,11 @@ const router = createBrowserRouter([
         element: <Newsletter />
       },
       {
-        path: 'about',
+        path: 'error',
+        element: <Error />
+      },
+      {
+        index: true,
         element: <About />
       }
     ]
@@ -136,28 +144,45 @@ const router = createBrowserRouter([
 ]);
 ```
 
-HomeLayout.jsx
+> > > HomeLayout.jsx
 
 ```js
 import { Link, Outlet } from 'react-router-dom';
-const HomeLayout = () => {
+
+const Homelayout = () => {
   return (
-    <div>
-      <nav>navbar</nav>
+    <>
+      <Link to='/home/about'>about</Link>
+      &nbsp;
+      <Link to='/home/landing'>landing</Link> &nbsp;
+      <Link to='/home/cocktail'>cocktail</Link> &nbsp;
+      <Link to='/home/newsletter'>newsletter</Link> &nbsp;
+      <Link to='/home/error'>error</Link> &nbsp;
+      <br></br>
+      <nav></nav>
+      <h1>navbar</h1>
       <Outlet />
-    </div>
+      <footer>
+        <h1>footer</h1>
+      </footer>
+    </>
   );
 };
-export default HomeLayout;
+export default Homelayout;
 ```
 
-App.jsx
+> > > child compo page landing
 
 ```js
-{
-  index:true
-  element: <Landing />,
-}
+const Landing = () => {
+  return (
+    <>
+      <div>Landing</div>
+      <Link to='/home'>go to home page</Link>
+    </>
+  );
+};
+export default Landing;
 ```
 
 #### Navbar
@@ -192,8 +217,6 @@ const Navbar = () => {
 
 export default Navbar;
 ```
-
-- setup in HomeLayout
 
 #### Styled Components
 
@@ -482,7 +505,7 @@ useEffect(() => {
 
 #### Loader
 
-Each route can define a "loader" function to provide data to the route element before it renders.
+Each route can define a "loader" function to provide data to the route element before it renders.like prefetching
 
 - must return something even "null" otherwise error
 
@@ -551,6 +574,7 @@ import axios from 'axios';
 
 const cocktailSearchUrl = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=';
 
+//this loader function will return the req feild and drink and the serchterm and use that in that landing compo
 export const loader = async () => {
   const searchTerm = 'margarita';
   const response = await axios.get(`${cocktailSearchUrl}${searchTerm}`);

@@ -1,17 +1,24 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import { About, Landing, Cocktail, HomeLayout, Error, Newsletter } from './pages';
+import { About, Landing, Cocktail, HomeLayout, Error, Newsletter, SinglePageError } from './pages';
+import { loader as landingloader } from './pages/landing';
+import { loader as singlecocktailloader } from './pages/cocktail';
 
 const router = createBrowserRouter([
   {
-    path: '/home',
+    path: '/',
     element: <HomeLayout />,
+    errorElement: <Error />,
     children: [
       {
-        path: 'landing',
+        index: true,
+        loader: landingloader,
+        errorElement: <SinglePageError />,
         element: <Landing />
       },
       {
-        path: 'cocktail',
+        path: 'cocktail/:id',
+        loader: singlecocktailloader,
+        errorElement: <SinglePageError />,
         element: <Cocktail />
       },
       {
@@ -19,11 +26,7 @@ const router = createBrowserRouter([
         element: <Newsletter />
       },
       {
-        path: 'error',
-        element: <Error />
-      },
-      {
-        index: true,
+        path: 'about',
         element: <About />
       }
     ]

@@ -4,3 +4,4 @@ export { default as Cocktail } from './cocktail';
 export { default as Newsletter } from './newsletter';
 export { default as HomeLayout } from './homelayout';
 export { default as Error } from './Error';
+export { default as SinglePageError } from './singlePageError';
