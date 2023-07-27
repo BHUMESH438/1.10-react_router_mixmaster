@@ -728,7 +728,7 @@ import { useNavigation } from 'react-router-dom';
 const HomeLayout = () => {
   const navigation = useNavigation();
   const isPageLoading = navigation.state === 'loading';
-  const value = 'some value';
+  const value = 'some value'; //passing the global value to outlet and can be invoked in any child compo by useglobalcontext()
   return (
     <>
       <Navbar />
@@ -772,7 +772,7 @@ import { useLoaderData, Link } from 'react-router-dom';
 import axios from 'axios';
 
 import Wrapper from '../assets/wrappers/CocktailPage';
-
+//this loader will give return the id and data from the browser obj where it is navigaed and from the navigated page it will return back the params and the id to the route
 export const loader = async ({ params }) => {
   const { id } = params;
   const { data } = await axios.get(`${singleCocktailUrl}${id}`);
@@ -781,13 +781,13 @@ export const loader = async ({ params }) => {
 
 const Cocktail = () => {
   const { id, data } = useLoaderData();
-
+  //from the route the id and data is got and it is destructured throught the useloaderdata inbuilt route fn
   const singleDrink = data.drinks[0];
   const { strDrink: name, strDrinkThumb: image, strAlcoholic: info, strCategory: category, strGlass: glass, strInstructions: instructions } = singleDrink;
   const validIngredients = Object.keys(singleDrink)
     .filter(key => key.startsWith('strIngredient') && singleDrink[key] !== null)
     .map(key => singleDrink[key]);
-
+[https://chat.openai.com/share/50611b40-d6b2-47bf-9883-0a1ee50ba981]
   return (
     <Wrapper>
       <header>
@@ -815,8 +815,8 @@ const Cocktail = () => {
             <span className='drink-data'>ingredients :</span>
             {validIngredients.map((item, index) => {
               return (
-                <span className='ing' key={item}>
-                  {item} {index < validIngredients.length - 1 ? ',' : ''}
+                <span className='ing' key={item}>we give the unique value i.e the ingredient value to the key
+                  {item} {index < validIngredients.length - 1 ? ',' : ''}/* for commmas*/
                 </span>
               );
             })}
@@ -839,7 +839,7 @@ export default Cocktail;
 const Cocktail = () => {
   import { Navigate } from 'react-router-dom';
   const { id, data } = useLoaderData();
-  // if (!data) return <h2>something went wrong...</h2>;
+  // if (!data) return <h2>something went wrong...</h2>; this line prevents the js to go further steps and also prenvemts to naviagte or got to the single page error file as we resolve and return the error here itself
   if (!data) return <Navigate to='/' />;
   return <Wrapper>....</Wrapper>;
 };
@@ -1042,7 +1042,7 @@ const newsletterUrl = 'https://www.course-api.com/cocktails-newsletter';
 export const action = async ({ request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
-
+  //we can use object.entries for sending the form data in the form of the obj key value pairs in the form data
   const response = await axios.post(newsletterUrl, data);
   console.log(response);
   return response;
@@ -1053,6 +1053,8 @@ export const action = async ({ request }) => {
 
 Newsletter.jsx
 
+- handle the error inside the action
+
 ```js
 import { redirect } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -1062,9 +1064,13 @@ export const action = async ({ request }) => {
   const data = Object.fromEntries(formData);
   try {
     const response = await axios.post(newsletterUrl, data);
-    console.log(response);
     toast.success(response.data.msg);
-    return redirect('/');
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve(redirect(`/`));
+      }, 2000);
+    });
+    //we can also use the redirect the page in react router
   } catch (error) {
     console.log(error);
     toast.error(error?.response?.data?.msg);
@@ -1076,6 +1082,8 @@ export const action = async ({ request }) => {
 #### Submit State
 
 Newsletter.jsx
+
+- usenavigation just like we set the global state for loading in the homepagelayout
 
 ```js
 import { Form, useNavigation } from 'react-router-dom';
@@ -1192,7 +1200,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: {
+    queries: {// will give how long the  query will be valid
       staleTime: 1000 * 60 * 5,
     },
   },
@@ -1235,8 +1243,8 @@ export const loader = async ({ request }) => {
 };
 
 const Landing = () => {
-  const { searchTerm } = useLoaderData();
-  const { data: drinks } = useQuery(searchCocktailsQuery(searchTerm));
+  const { searchTerm } = useLoaderData(); //loader is not a hoook
+  const { data: drinks } = useQuery(searchCocktailsQuery(searchTerm)); //usequery is a hook
   return (
     <>
       <SearchForm searchTerm={searchTerm} />
